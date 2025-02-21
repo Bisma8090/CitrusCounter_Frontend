@@ -1,22 +1,24 @@
 import React, { useState, useEffect } from 'react';
-import { View } from 'react-native';
 import { createStackNavigator } from '@react-navigation/stack';
 
-import SplashScreen from '../screens/SplashScreen'; 
-import LoginScreen from '../screens/LoginScreen';  
+import SplashScreen from '../screens/SplashScreen';
+import LoginScreen from '../screens/LoginScreen';
 import HomeScreen from '../screens/HomeScreen';
 import SignupScreen from '../screens/SignupScreen';
 import ForgotPasswordScreen from '../screens/ForgotPasswordScreen';
-import VerifyOTPScreen from '../screens/VerifyOTPScreen';
+import CitrusCounterScreen from '../screens/CitrusCounterScreen';
+import SummaryScreen from '../screens/SummaryScreen';
+import ReportScreen from '../screens/ReportScreen';
 
 const Stack = createStackNavigator();
 
 export default function AppNavigator() {
   const [isLoading, setIsLoading] = useState(true);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false); // Future authentication support
 
   useEffect(() => {
-    setTimeout(() => setIsLoading(false), 3000);
+    const timer = setTimeout(() => setIsLoading(false), 2000);
+    return () => clearTimeout(timer);
   }, []);
 
   if (isLoading) {
@@ -27,14 +29,20 @@ export default function AppNavigator() {
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       {!isLoggedIn ? (
         <>
-        <Stack.Screen name="Login" component={LoginScreen} />
-        <Stack.Screen name="SignUp" component={SignupScreen} />
-        <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
-        <Stack.Screen name="VerifyOTP" component={VerifyOTPScreen} />
-        
+          <Stack.Screen name="Login" component={LoginScreen} />
+          <Stack.Screen name="SignUp" component={SignupScreen} />
+          <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
+          <Stack.Screen name="CitrusCounter" component={CitrusCounterScreen} />
+          <Stack.Screen name="SummaryScreen" component={SummaryScreen} />
+          <Stack.Screen name="ReportScreen" component={ReportScreen} />
+          <Stack.Screen name="Home" component={HomeScreen} />
+
         </>
       ) : (
-        <Stack.Screen name="Home" component={HomeScreen} />
+        <>
+          <Stack.Screen name="CitrusCounter" component={CitrusCounterScreen} />
+          <Stack.Screen name="SummaryScreen" component={SummaryScreen} />
+        </>
       )}
     </Stack.Navigator>
   );

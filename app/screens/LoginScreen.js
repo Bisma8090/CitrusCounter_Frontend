@@ -67,12 +67,12 @@ const LoginScreen = ({ navigation }) => {
     }
 
     try {
-      const response = await fetch('https://your-backend-url.com/login', {
+      const response = await fetch('https://de6e-202-166-163-82.ngrok-free.app/auth/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ phoneNumber, password }),
+        body: JSON.stringify({ phonenumber: phoneNumber, password }),
       });
 
       const data = await response.json();
@@ -123,11 +123,9 @@ const LoginScreen = ({ navigation }) => {
           </TouchableOpacity>
         </View>
 
-        <TouchableOpacity onPress={() => navigation.navigate('VerifyOTP')}>
-  <Text style={styles.forgotPassword}>Forgot password?</Text>
-</TouchableOpacity>
-
-
+        <TouchableOpacity onPress={() => navigation.navigate('ForgotPassword')}>
+          <Text style={styles.forgotPassword}>Forgot password?</Text>
+        </TouchableOpacity>
 
         <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
           <Text style={styles.loginButtonText}>LOGIN</Text>
@@ -148,7 +146,11 @@ const styles = StyleSheet.create({
   container: { flex: 1 },
   backgroundImage: { position: 'absolute', width: '100%', height: '100%', resizeMode: 'cover' },
   overlay: { flex: 1, justifyContent: 'center', alignItems: 'center', paddingHorizontal: 20, backgroundColor: 'rgba(0, 0, 0, 0.4)' },
-  title: { fontSize: 38, fontWeight: 'bold', color: '#fff' },
+  title: { fontSize: 38, fontWeight: 'bold', color: '#fff',textTransform: 'uppercase', 
+    letterSpacing: 1, 
+    textShadowColor: 'rgba(11, 11, 11, 0.3)', 
+    textShadowOffset: { width: 1, height: 2 }, 
+    textShadowRadius: 5 },
   subtitle: { fontSize: 18, color: '#fff', marginBottom: 50 },
   label: { alignSelf: 'flex-start', fontSize: 16, color: 'rgb(255, 255, 255)', fontWeight: 'bold', marginBottom: 10 },
   input: { width: '100%', height: 50, borderRadius: 25, borderWidth: 1, borderColor: '#fff', paddingHorizontal: 15, color: '#fff', marginBottom: 20, backgroundColor: 'rgba(255,255,255,0.2)' },

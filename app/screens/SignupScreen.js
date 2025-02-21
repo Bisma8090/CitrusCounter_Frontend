@@ -14,44 +14,32 @@ const SignupScreen = ({ navigation }) => {
   const passwordRef = useRef(null);
   const confirmPasswordRef = useRef(null);
 
-  const validatePhoneNumber = (input) => {
-    return /^03\d{9}$/.test(input);
-  };
+  const API_URL = "https://de6e-202-166-163-82.ngrok-free.app/auth/signup"; // ✅ Corrected API URL
+
+  const validatePhoneNumber = (input) => /^03\d{9}$/.test(input);
 
   const handlePhoneNumberChange = (input) => {
     let formattedInput = input.replace(/\D/g, "");
-
     if (formattedInput.length === 1 && formattedInput !== "0") {
-      setTimeout(() => Alert.alert('Invalid Number', 'Pakistani number must start with 03'), 100);
+      Alert.alert('Invalid Number', 'Pakistani number must start with 03');
       return;
     }
-
     if (formattedInput.length >= 2 && !formattedInput.startsWith("03")) {
-      setTimeout(() => Alert.alert('Invalid Number', 'Pakistani number must start with 03'), 100);
+      Alert.alert('Invalid Number', 'Pakistani number must start with 03');
       return;
     }
-
     if (formattedInput.length > 11) {
-      setTimeout(() => Alert.alert('Invalid Number', 'Pakistani number must be exactly 11 digits.'), 100);
+      Alert.alert('Invalid Number', 'Pakistani number must be exactly 11 digits.');
       return;
     }
-
     setPhoneNumber(formattedInput);
   };
 
-  const validatePassword = (input) => /^[A-Za-z0-9]{6}$/.test(input);
-
   const handlePasswordChange = (input, type) => {
     let formattedInput = input.replace(/[^A-Za-z0-9]/g, "");
-
-    if (input.length > 6) {
-      setTimeout(() => Alert.alert('Invalid Password', 'Password must be exactly 6 characters (letters & numbers only).'), 100);
+    if (formattedInput.length > 6) {
+      Alert.alert('Invalid Password', 'Password must be exactly 6 characters.');
     }
-
-    if (input !== formattedInput) {
-      setTimeout(() => Alert.alert('Invalid Character', 'Only letters & numbers are allowed in password.'), 100);
-    }
-
     if (type === "password") {
       setPassword(formattedInput.slice(0, 6));
     } else {
@@ -68,41 +56,41 @@ const SignupScreen = ({ navigation }) => {
       Alert.alert('Error', 'Invalid Pakistani phone number!');
       return;
     }
-    if (password.length !== 6) {
-      Alert.alert('Error', 'Password must be exactly 6 characters.');
-      return;
-    }
     if (password !== confirmPassword) {
       Alert.alert('Error', 'Passwords do not match!');
       return;
     }
   
     try {
-      const response = await fetch('https://your-backend-url.com/signup', {
+      const response = await fetch(API_URL, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          name,
-          phoneNumber,
-          password,
+          fullname: name,        
+          phonenumber: phoneNumber,  
+          password: password,
+          confirmpassword: confirmPassword,
         }),
       });
   
+      console.log('Raw Response:', response); // ✅ Debugging line
+  
       const data = await response.json();
+      console.log('Response Data:', data); // ✅ Debugging line
   
       if (response.ok) {
-        Alert.alert('Success', 'Your signup request has been sent!', [
-          { text: 'OK', onPress: () => navigation.navigate('HomeScreen') }
+        Alert.alert('Success', 'Signup successful!', [
+          { text: 'OK', onPress: () => navigation.navigate('Login') },
         ]);
       } else {
         Alert.alert('Error', data.message || 'Signup failed. Please try again.');
       }
     } catch (error) {
-      Alert.alert('Error', 'Something went wrong. Please check your connection.');
+      console.error('Signup Error:', error); // ✅ Debugging line
+      Alert.alert('Error', 'Could not connect to the server. Check your network.');
     }
   };
+  
   
 
   return (
@@ -174,7 +162,7 @@ const SignupScreen = ({ navigation }) => {
 
         <Text style={styles.loginText}>
           Already have an account?{' '}
-          <Text style={styles.loginLink} onPress={() => navigation.navigate('Login')}>
+          <Text style={styles.loginLink} onPress={() => navigation.navigate('Home')}>
             Login
           </Text>
         </Text>
@@ -187,7 +175,13 @@ const styles = StyleSheet.create({
   container: { flex: 1 },
   backgroundImage: { position: 'absolute', width: '100%', height: '100%', resizeMode: 'cover' },
   overlay: { flex: 1, justifyContent: 'center', alignItems: 'center', paddingHorizontal: 20, backgroundColor: 'rgba(0, 0, 0, 0.4)' },
-  title: { fontSize: 38, fontWeight: 'bold', color: '#fff' },
+  title: { fontSize: 38, fontWeight: 'bold', color: '#fff',
+    textTransform: 'uppercase', 
+    letterSpacing: 1, 
+    textShadowColor: 'rgba(11, 11, 11, 0.3)', 
+    textShadowOffset: { width: 2, height: 2 }, 
+    textShadowRadius: 5
+  ,marginBottom:30 },
   label: { alignSelf: 'flex-start', fontSize: 16, color: 'rgb(255, 255, 255)', fontWeight: 'bold', marginBottom: 10 },
   input: { width: '100%', height: 50, borderRadius: 25, borderWidth: 1, borderColor: '#fff', paddingHorizontal: 15, color: '#fff', marginBottom: 20, backgroundColor: 'rgba(255,255,255,0.2)' },
   passwordContainer: { flexDirection: 'row', alignItems: 'center', width: '100%', height: 50, borderRadius: 25, borderWidth: 1, borderColor: '#fff', paddingHorizontal: 15, backgroundColor: 'rgba(255,255,255,0.2)', marginBottom: 15 },
