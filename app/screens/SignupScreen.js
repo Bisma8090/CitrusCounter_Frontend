@@ -14,10 +14,10 @@ const SignupScreen = ({ navigation }) => {
   const passwordRef = useRef(null);
   const confirmPasswordRef = useRef(null);
 
-  const API_URL = "https://de6e-202-166-163-82.ngrok-free.app/auth/signup"; // ✅ Corrected API URL
+  const API_URL = "https://de6e-202-166-163-82.ngrok-free.app/auth/signup";
 
   const validatePhoneNumber = (input) => /^03\d{9}$/.test(input);
-
+  
   const handlePhoneNumberChange = (input) => {
     let formattedInput = input.replace(/\D/g, "");
     if (formattedInput.length === 1 && formattedInput !== "0") {
@@ -35,16 +35,34 @@ const SignupScreen = ({ navigation }) => {
     setPhoneNumber(formattedInput);
   };
 
-  const handlePasswordChange = (input, type) => {
-    let formattedInput = input.replace(/[^A-Za-z0-9]/g, "");
-    if (formattedInput.length > 6) {
-      Alert.alert('Invalid Password', 'Password must be exactly 6 characters.');
+  const validatePassword = (input) => /^[A-Za-z0-9]{6}$/.test(input);
+
+  const handlePasswordChange = (input) => {
+    let formattedInput = input.replace(/[^A-Za-z0-9]/g, '');
+
+    if (input.length > 6) {
+      setTimeout(() => Alert.alert('Invalid Password', 'Password must be exactly 6 characters (letters & numbers only).'), 100);
     }
-    if (type === "password") {
-      setPassword(formattedInput.slice(0, 6));
-    } else {
-      setConfirmPassword(formattedInput.slice(0, 6));
+
+    if (input !== formattedInput) {
+      setTimeout(() => Alert.alert('Invalid Character', 'Only letters & numbers are allowed in password.'), 100);
     }
+
+    setPassword(formattedInput.slice(0, 6));
+  };
+
+  const handleConfirmPasswordChange = (input) => {
+    let formattedInput = input.replace(/[^A-Za-z0-9]/g, '');
+
+    if (input.length > 6) {
+      setTimeout(() => Alert.alert('Invalid Password', 'Password must be exactly 6 characters (letters & numbers only).'), 100);
+    }
+
+    if (input !== formattedInput) {
+      setTimeout(() => Alert.alert('Invalid Character', 'Only letters & numbers are allowed in password.'), 100);
+    }
+
+    setConfirmPassword(formattedInput.slice(0, 6));
   };
 
   const handleSignup = async () => {
@@ -56,28 +74,29 @@ const SignupScreen = ({ navigation }) => {
       Alert.alert('Error', 'Invalid Pakistani phone number!');
       return;
     }
+    if (!validatePassword(password)) {
+      Alert.alert('Error', 'Password must be exactly 6 characters (letters & numbers only).');
+      return;
+    }
     if (password !== confirmPassword) {
       Alert.alert('Error', 'Passwords do not match!');
       return;
     }
-  
+
     try {
       const response = await fetch(API_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          fullname: name,        
-          phonenumber: phoneNumber,  
+          fullname: name,
+          phonenumber: phoneNumber,
           password: password,
           confirmpassword: confirmPassword,
         }),
       });
-  
-      console.log('Raw Response:', response); // ✅ Debugging line
-  
+
       const data = await response.json();
-      console.log('Response Data:', data); // ✅ Debugging line
-  
+
       if (response.ok) {
         Alert.alert('Success', 'Signup successful!', [
           { text: 'OK', onPress: () => navigation.navigate('Login') },
@@ -86,23 +105,19 @@ const SignupScreen = ({ navigation }) => {
         Alert.alert('Error', data.message || 'Signup failed. Please try again.');
       }
     } catch (error) {
-      console.error('Signup Error:', error); // ✅ Debugging line
       Alert.alert('Error', 'Could not connect to the server. Check your network.');
     }
   };
-  
-  
 
   return (
     <View style={styles.container}>
       <Image source={require('../../assets/bgphoto.png')} style={styles.backgroundImage} />
       <View style={styles.overlay}>
         <Text style={styles.title}>Sign Up</Text>
-
         <Text style={styles.label}>Full Name</Text>
         <TextInput
           style={styles.input}
-          placeholder="Your name"
+          placeholder="Full Name"
           placeholderTextColor="rgb(216, 213, 213)"
           value={name}
           onChangeText={setName}
@@ -127,11 +142,11 @@ const SignupScreen = ({ navigation }) => {
           <TextInput
             ref={passwordRef}
             style={styles.passwordInput}
-            placeholder="••••••"
+            placeholder="Password"
             placeholderTextColor="rgb(216, 213, 213)"
             secureTextEntry={secureTextEntry}
             value={password}
-            onChangeText={(text) => handlePasswordChange(text, "password")}
+            onChangeText={handlePasswordChange}
             returnKeyType="next"
             onSubmitEditing={() => confirmPasswordRef.current.focus()}
           />
@@ -145,11 +160,11 @@ const SignupScreen = ({ navigation }) => {
           <TextInput
             ref={confirmPasswordRef}
             style={styles.passwordInput}
-            placeholder="••••••"
+            placeholder="Confirm Password"
             placeholderTextColor="rgb(216, 213, 213)"
             secureTextEntry={secureConfirmEntry}
             value={confirmPassword}
-            onChangeText={(text) => handlePasswordChange(text, "confirmPassword")}
+            onChangeText={handleConfirmPasswordChange}
           />
           <TouchableOpacity onPress={() => setSecureConfirmEntry(!secureConfirmEntry)}>
             <Icon name={secureConfirmEntry ? 'eye-slash' : 'eye'} size={20} color="#fff" />
@@ -175,13 +190,7 @@ const styles = StyleSheet.create({
   container: { flex: 1 },
   backgroundImage: { position: 'absolute', width: '100%', height: '100%', resizeMode: 'cover' },
   overlay: { flex: 1, justifyContent: 'center', alignItems: 'center', paddingHorizontal: 20, backgroundColor: 'rgba(0, 0, 0, 0.4)' },
-  title: { fontSize: 38, fontWeight: 'bold', color: '#fff',
-    textTransform: 'uppercase', 
-    letterSpacing: 1, 
-    textShadowColor: 'rgba(11, 11, 11, 0.3)', 
-    textShadowOffset: { width: 2, height: 2 }, 
-    textShadowRadius: 5
-  ,marginBottom:30 },
+  title: { fontSize: 38, fontWeight: 'bold', color: '#fff', marginBottom: 25 },
   label: { alignSelf: 'flex-start', fontSize: 16, color: 'rgb(255, 255, 255)', fontWeight: 'bold', marginBottom: 10 },
   input: { width: '100%', height: 50, borderRadius: 25, borderWidth: 1, borderColor: '#fff', paddingHorizontal: 15, color: '#fff', marginBottom: 20, backgroundColor: 'rgba(255,255,255,0.2)' },
   passwordContainer: { flexDirection: 'row', alignItems: 'center', width: '100%', height: 50, borderRadius: 25, borderWidth: 1, borderColor: '#fff', paddingHorizontal: 15, backgroundColor: 'rgba(255,255,255,0.2)', marginBottom: 15 },

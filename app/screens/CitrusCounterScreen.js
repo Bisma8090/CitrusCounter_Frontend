@@ -54,7 +54,7 @@ const CitrusCounterScreen = () => {
         {images.map((img, index) => (
           <TouchableOpacity 
             key={index} 
-            style={[styles.imageBox, index === 1 && { marginRight: 10 }, index === 0 && { marginBottom: 16 }, index === 1 && { marginBottom: 16 }]} 
+            style={styles.imageBox} 
             onPress={() => {
               setSelectedIndex(index);
               setModalVisible(true);
@@ -62,9 +62,11 @@ const CitrusCounterScreen = () => {
             {img ? (
               <Image source={{ uri: img }} style={styles.image} />
             ) : (
-              <Image source={require('../../assets/bgphoto.png')} style={styles.icon} />
+              <>
+                <Image source={require('../../assets/iconn.png')} style={styles.icon} />
+                <Text style={styles.imageText}>Add Image</Text>
+              </>
             )}
-            <Text style={styles.imageText}>Image 0{index + 1}</Text>
           </TouchableOpacity>
         ))}
       </View>
@@ -94,46 +96,39 @@ const CitrusCounterScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: 'center', alignItems: 'center' },
+  container: { flex: 1,  alignItems: 'center' },
   backgroundImage: { position: 'absolute', width: '100%', height: '100%', resizeMode: 'cover' },
-  header: { alignSelf: 'flex-start', marginLeft: 19, marginBottom: 50, marginTop: 40 },
-  title: { fontSize: 32, color: '#fff', fontWeight: 'bold', 
-    letterSpacing: 1, 
-    textShadowColor: 'rgba(11, 11, 11, 0.3)', 
-    textShadowOffset: { width: 2, height: 2 }, 
-    textShadowRadius: 5
-  },
-  appName: { fontSize: 36, color: '#2a7e19', fontWeight: 'bold', 
-    letterSpacing: 1, 
-    textShadowColor: 'rgba(11, 11, 11, 0.3)', 
-    textShadowOffset: { width: 2, height: 2 }, 
-    textShadowRadius: 5
-  },
+  header: { alignSelf: 'flex-start', marginLeft: 19, marginBottom: 30, marginTop: 100 },
+  title: { fontSize: 32, color: '#fff', fontWeight: 'bold', textShadowColor: 'rgba(37, 125, 50, 0.3)', textShadowOffset: { width: 2, height: 2 }, textShadowRadius: 5 },
+  appName: { fontSize: 36, color: '#2a7e19', fontWeight: 'bold', textShadowColor: 'rgba(11, 11, 11, 0.3)', textShadowOffset: { width: 2, height: 2 }, textShadowRadius: 5 },
   imageContainer: { 
     flexDirection: 'row', 
     flexWrap: 'wrap', 
     justifyContent: 'center', 
-    width: '94%' 
+    width: '94%',
+    marginTop: 10
   },
   imageBox: { 
-    width: '45%', 
-    aspectRatio: 0.7, 
+    width: '45%',
+    height: 140,   // Fixed height so image add hone ke baad bhi same rahe
     backgroundColor: 'rgba(255,255,255,0.5)', 
     margin: 5, 
     justifyContent: 'center', 
     alignItems: 'center', 
-    borderRadius: 10 
+    borderRadius: 10,
+    overflow: 'hidden' ,
   },
-  icon: { width: 40, height: 40 },
-  imageText: { color: '#000', fontSize: 14 },
   image: { width: '100%', height: '100%', borderRadius: 10 },
+  icon: { width: 30, height: 30 },
+  imageText: { color: '#000', fontSize: 14,  textShadowColor: 'rgba(33, 113, 49, 0.3)', textShadowOffset: { width: 2, height: 2 }, textShadowRadius: 5 },
   button: { 
-    position: 'absolute',  
-    bottom: 100,
+    position: 'absolute',
+    bottom: 80,
     backgroundColor: '#2a7e19', 
     padding: 15, 
     borderRadius: 10 
-  },  disabledButton: { backgroundColor: '#2a7e19' },
+  },
+  disabledButton: { backgroundColor: '#2a7e19' },
   buttonText: { color: '#fff', fontSize: 18, fontWeight: 'bold' },
   modalContainer: { position: 'absolute', bottom: 0, width: '100%', backgroundColor: '#fff', padding: 20, borderTopLeftRadius: 15, borderTopRightRadius: 15, alignItems: 'center' },
   modalButton: { padding: 15, width: '100%', alignItems: 'center', borderBottomWidth: 1, borderColor: '#ccc' },
