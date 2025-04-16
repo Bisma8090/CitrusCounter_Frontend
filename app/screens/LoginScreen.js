@@ -67,7 +67,7 @@ const LoginScreen = ({ navigation }) => {
     }
 
     try {
-      const response = await fetch('https://de6e-202-166-163-82.ngrok-free.app/auth/login', {
+      const response = await fetch('http://192.168.37.218:5000/auth/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

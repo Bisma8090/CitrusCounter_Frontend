@@ -15,51 +15,50 @@ const SummaryScreen = () => {
   const [treesPerAcre, setTreesPerAcre] = useState(route.params?.totalTrees || null);
 
   useEffect(() => {
-    fetchCitrusCount();
-    fetchHistory();
+    fetchSummaryData();
     fetchUserData();
   }, []);
+  
 
-  const fetchCitrusCount = async () => {
+  const fetchSummaryData = async () => {
     try {
-      const response = await fetch('YOUR_CITRUS_COUNT_API');
+      const response = await fetch('http://192.168.37.218:5000/summary');
       const data = await response.json();
-      setCitrusCount(data.count);
+  
+      if (data) {
+        setCitrusCount(data.latest_count);
+        setHistory(data.previous_history);
+      } else {
+        throw new Error('Invalid response structure');
+      }
     } catch (error) {
-      Alert.alert('Error', 'Failed to fetch citrus count');
+      Alert.alert('Error', 'Failed to fetch summary data');
+      console.error('Error fetching summary:', error);
     }
   };
-
-  const fetchHistory = async () => {
-    try {
-      const response = await fetch('YOUR_HISTORY_API');
-      const data = await response.json();
-      setHistory(data.history);
-    } catch (error) {
-      Alert.alert('Error', 'Failed to fetch history');
-    }
-  };
-
   const fetchUserData = async () => {
     try {
       const name = await AsyncStorage.getItem('farmerName');
       if (name) setFarmerName(name);
     } catch (error) {
       Alert.alert('Error', 'Failed to load user data');
+      console.error('Error loading user data:', error);
     }
   };
-
   const handleGenerateReport = async () => {
+    const citrusPerTree = citrusCount ? citrusCount : "N/A"; // Only pass citrusCount if available
+  
     const reportData = {
       date: new Date().toLocaleDateString(),
-      farmerName: farmerName || "N/A",
-      location: location || "N/A",
-      citrusCount: citrusCount ?? "N/A",
-      citrusPerAcre: citrusCount && treesPerAcre ? citrusCount * treesPerAcre : "N/A",
+      farmerName: farmerName || "N/A",   // Farmer name from AsyncStorage or default to 'N/A'
+      location: location || "N/A",       // Location from the route params or default to 'N/A'
+      citrusCount: citrusCount ?? "N/A", // Citrus count from the summary page or 'N/A'
     };
   
+    console.log("Sending report data: ", reportData);
+  
     try {
-      const response = await fetch('YOUR_BACKEND_REPORT_API', {
+      const response = await fetch('http://192.168.37.218:5000/generate-report', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -67,20 +66,31 @@ const SummaryScreen = () => {
         body: JSON.stringify(reportData),
       });
   
-      if (!response.ok) {
-        throw new Error('Failed to save report');
+      const text = await response.text(); // Get the raw response as text
+      try {
+        const data = JSON.parse(text); // Try parsing the response as JSON
+        console.log("✅ Report response:", data);
+  
+        if (!response.ok) {
+          throw new Error(data.message || 'Failed to generate report');
+        }
+  
+        navigation.navigate("ReportScreen", {
+          ...reportData, // Pass report data to the report screen
+        });
+      } catch (error) {
+        console.error('JSON Parsing error:', error);
+        throw new Error(`Invalid response format: ${text}`);
       }
-  
-      console.log("✅ Report saved successfully in backend");
-  
-      navigation.navigate("ReportScreen", reportData);
     } catch (error) {
-      Alert.alert('Error', 'Failed to save report');
-      console.error("❌ Error saving report:", error);
+      console.error("❌ Report generation failed:", error);
+      Alert.alert('Error', error.message);
     }
   };
   
-
+  
+  
+  
   return (
     <View style={styles.container}>
       <View style={styles.topDesign} />
@@ -92,10 +102,14 @@ const SummaryScreen = () => {
 
       <Text style={styles.historyHeading}>Previous History</Text>
       <FlatList
-        data={history}
-        keyExtractor={(item, index) => index.toString()}
-        renderItem={({ item }) => <Text style={styles.historyItem}>{item.date} | {item.count}</Text>}
-      />
+  data={history}
+  keyExtractor={(item, index) => index.toString()}
+  renderItem={({ item }) => (
+    <Text style={styles.historyItem}>
+      {item.date} | {item.citrusCount}
+    </Text>
+  )}
+/>
 
       <View style={styles.buttonContainer}>
         <TouchableOpacity style={styles.button} onPress={handleGenerateReport}>

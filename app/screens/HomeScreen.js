@@ -38,47 +38,18 @@ const HomeScreen = () => {
       setLocation("Location not found");
     }
   };
-  const saveLandData = async () => {
-    try {
-      console.log('Saving data:', { landSize, totalTrees, location });
-
-    //   const response = await fetch('https://your-backend-api.com/save-land-data', {  // ✅ Actual API URL lagao
-    //     method: 'POST',
-    //     headers: { 'Content-Type': 'application/json' },
-    //     body: JSON.stringify({
-    //       landSize,
-    //       totalTrees,
-    //       location,
-    //     }),
-    //   });
-  
-    //   const text = await response.text();  // ✅ Backend ka response pehle text format me lo
-    //   console.log('Raw Response:', text); 
-  
-    //   const result = JSON.parse(text);  // ✅ Phir JSON parse karo
-    //   console.log('Data saved:', result);
-    } catch (error) {
-      console.error('Error saving data:', error);
+  const generateReport = () => {
+    if (location === 'Fetching location...') {
+      Alert.alert('Please wait', 'We are still fetching your location.');
+      return;
     }
+  
+    navigation.navigate('ReportScreen', {
+      location: location,
+      
+    });
   };
   
-
-  // ✅ Auto-save jab user input kare (debounced)
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      if (landSize && totalTrees) {
-        saveLandData();
-      }
-    }, 2000);
-    return () => clearTimeout(timer);
-  }, [landSize, totalTrees]);
-
-  // ✅ Auto-save jab location mil jaye
-  useEffect(() => {
-    if (location !== "Fetching location..."  && location !== "Location not found") {
-      saveLandData();
-    }
-  }, [location]);
 
   return (
     <View style={styles.container}>

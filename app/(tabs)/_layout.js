@@ -11,7 +11,6 @@ import SummaryScreen from '../screens/SummaryScreen';
 import ReportScreen from '../screens/ReportScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 import EditProfileScreen from '../screens/EditProfileScreen';
-import MapScreen from '../screens/MapScreen';
 
 const Stack = createStackNavigator();
 
@@ -38,10 +37,9 @@ export default function AppNavigator() {
           <Stack.Screen name="CitrusCounter" component={CitrusCounterScreen} />
           <Stack.Screen name="SummaryScreen" component={SummaryScreen} />
           <Stack.Screen name="ReportScreen" component={ReportScreen} />
-          <Stack.Screen name="Home" component={HomeScreen} />
+          <Stack.Screen name="HomeScreen" component={HomeScreen} />
           <Stack.Screen name="ProfileScreen" component={ProfileScreen} />
           <Stack.Screen name="EditProfileScreen" component={EditProfileScreen} />
-          <Stack.Screen name="MapScreen" component={MapScreen} />
 
         </>
       ) : (

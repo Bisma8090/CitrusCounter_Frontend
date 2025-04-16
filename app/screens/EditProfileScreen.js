@@ -58,15 +58,15 @@ const EditProfileScreen = () => {
     }
 
     try {
-      const response = await fetch("YOUR_BACKEND_API_URL", {
-        method: "POST",
+      const response = await fetch("http://192.168.37.218:5000/auth/edit-profile", {
+        method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          name,
-          phone,
-          password,
+          fullname:name,
+          phonenumber:phone,
+          password:password,
         }),
       });
 

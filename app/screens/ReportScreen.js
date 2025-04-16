@@ -4,7 +4,11 @@ import * as Print from 'expo-print';
 import { shareAsync } from 'expo-sharing';
 
 const ReportScreen = ({ route }) => {
-  const { date, farmerName, location, citrusPerTree, citrusPerAcre } = route.params || {};
+  console.log('ROUTE PARAMS:', route.params); // ✅ Log route params for debugging
+
+  // Extract the location (and other data) from route params, providing a default value if missing
+  const { date, farmerName, location = "Location not available", citrusCount } = route.params || {};
+  console.log('LOCATION RECEIVED:', location); // Log the received location to ensure it's correct
 
   const generatePDF = async () => {
     try {
@@ -23,8 +27,7 @@ const ReportScreen = ({ route }) => {
             <p><strong>Date:</strong> ${date}</p>
             <p><strong>Farmer Name:</strong> ${farmerName}</p>
             <p><strong>Location:</strong> ${location}</p>
-            <p><strong>Citrus Count Per Tree:</strong> ${citrusPerTree}</p>
-            <p><strong>Citrus Count Per Acre:</strong> ${citrusPerAcre}</p>
+            <p><strong>Citrus Count Per Tree:</strong> ${citrusCount}</p>
           </body>
         </html>
       `;
@@ -45,8 +48,7 @@ const ReportScreen = ({ route }) => {
       <Text style={styles.detail}><Text style={styles.label}>Date:</Text> {date}</Text>
       <Text style={styles.detail}><Text style={styles.label}>Farmer Name:</Text> {farmerName}</Text>
       <Text style={styles.detail}><Text style={styles.label}>Location:</Text> {location}</Text>
-      <Text style={styles.detail}><Text style={styles.label}>Citrus Count Per Tree:</Text> {citrusPerTree}</Text>
-      <Text style={styles.detail}><Text style={styles.label}>Citrus Count Per Acre:</Text> {citrusPerAcre}</Text>
+      <Text style={styles.detail}><Text style={styles.label}>Citrus Count Per Tree:</Text> {citrusCount}</Text>
 
       <TouchableOpacity style={styles.button} onPress={generatePDF}>
         <Text style={styles.buttonText}>Download Report</Text>
@@ -55,19 +57,38 @@ const ReportScreen = ({ route }) => {
   );
 };
 
-
-
 const styles = StyleSheet.create({
   container: { flex: 1, padding: 20, backgroundColor: '#fff', justifyContent: 'center' },
-  heading: { fontSize: 27, fontWeight: 'bold', color: '#2a7e19', textAlign: 'center', marginBottom: 30,  textTransform: 'uppercase', 
-    textShadowColor: 'rgba(11, 11, 11, 0.3)', 
-    textShadowOffset: { width: 2, height: 2 }, 
-    textShadowRadius: 5 },
+  heading: {
+    fontSize: 27,
+    fontWeight: 'bold',
+    color: '#2a7e19',
+    textAlign: 'center',
+    marginBottom: 30,
+    textTransform: 'uppercase',
+    textShadowColor: 'rgba(11, 11, 11, 0.3)',
+    textShadowOffset: { width: 2, height: 2 },
+    textShadowRadius: 5
+  },
   detail: { fontSize: 16, marginBottom: 10, paddingLeft: 14 },
   label: { fontWeight: 'bold' },
-  button: { backgroundColor: '#2a7e19', padding: 12, borderRadius: 10, alignItems: 'center', marginTop: 30 },
+  button: {
+    backgroundColor: '#2a7e19',
+    padding: 12,
+    borderRadius: 10,
+    alignItems: 'center',
+    marginTop: 30
+  },
   buttonText: { color: '#fff', fontSize: 16, fontWeight: 'bold' },
-  topDesign: { position: 'absolute', width: 100, height: 100, backgroundColor: 'green', borderRadius: 50, top: -20, left: -20 },
+  topDesign: {
+    position: 'absolute',
+    width: 100,
+    height: 100,
+    backgroundColor: 'green',
+    borderRadius: 50,
+    top: -20,
+    left: -20
+  },
   orangeCircle: { backgroundColor: 'orange', right: -30, left: 'auto' }
 });
 

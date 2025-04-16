@@ -14,7 +14,7 @@ const SignupScreen = ({ navigation }) => {
   const passwordRef = useRef(null);
   const confirmPasswordRef = useRef(null);
 
-  const API_URL = "https://de6e-202-166-163-82.ngrok-free.app/auth/signup";
+  const API_URL = "http://192.168.37.218:5000/auth/signup";
 
   const validatePhoneNumber = (input) => /^03\d{9}$/.test(input);
   
