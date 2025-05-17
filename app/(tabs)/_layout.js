@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
+import AsyncStorage from '@react-native-async-storage/async-storage'; // ⬅️ import AsyncStorage
 
 import SplashScreen from '../screens/SplashScreen';
 import LoginScreen from '../screens/LoginScreen';
@@ -16,11 +17,21 @@ const Stack = createStackNavigator();
 
 export default function AppNavigator() {
   const [isLoading, setIsLoading] = useState(true);
-  const [isLoggedIn, setIsLoggedIn] = useState(false); // Future authentication support
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
-    const timer = setTimeout(() => setIsLoading(false), 2000);
-    return () => clearTimeout(timer);
+    const checkLoginStatus = async () => {
+      try {
+        const userData = await AsyncStorage.getItem('userData');
+        setIsLoggedIn(!!userData); // true if data exists
+      } catch (error) {
+        console.log('Error checking login status:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    checkLoginStatus();
   }, []);
 
   if (isLoading) {
@@ -28,26 +39,17 @@ export default function AppNavigator() {
   }
 
   return (
-    <Stack.Navigator screenOptions={{ headerShown: false }}>
-      {!isLoggedIn ? (
-        <>
-          <Stack.Screen name="Login" component={LoginScreen} />
-          <Stack.Screen name="SignUp" component={SignupScreen} />
-          <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
-          <Stack.Screen name="CitrusCounter" component={CitrusCounterScreen} />
-          <Stack.Screen name="SummaryScreen" component={SummaryScreen} />
-          <Stack.Screen name="ReportScreen" component={ReportScreen} />
-          <Stack.Screen name="HomeScreen" component={HomeScreen} />
-          <Stack.Screen name="ProfileScreen" component={ProfileScreen} />
-          <Stack.Screen name="EditProfileScreen" component={EditProfileScreen} />
+    <Stack.Navigator initialRouteName={isLoggedIn ? 'HomeScreen' : 'Login'} screenOptions={{ headerShown: false }}>
+  <Stack.Screen name="Login" component={LoginScreen} />
+  <Stack.Screen name="SignUp" component={SignupScreen} />
+  <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
+  <Stack.Screen name="HomeScreen" component={HomeScreen} />
+  <Stack.Screen name="CitrusCounter" component={CitrusCounterScreen} />
+  <Stack.Screen name="SummaryScreen" component={SummaryScreen} />
+  <Stack.Screen name="ReportScreen" component={ReportScreen} />
+  <Stack.Screen name="ProfileScreen" component={ProfileScreen} />
+  <Stack.Screen name="EditProfileScreen" component={EditProfileScreen} />
+</Stack.Navigator>
 
-        </>
-      ) : (
-        <>
-          <Stack.Screen name="CitrusCounter" component={CitrusCounterScreen} />
-          <Stack.Screen name="SummaryScreen" component={SummaryScreen} />
-        </>
-      )}
-    </Stack.Navigator>
   );
 }

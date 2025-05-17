@@ -34,12 +34,22 @@ const CitrusCounterScreen = () => {
   };
 
   const handleProceed = () => {
-    if (images.includes(null)) {
-      Alert.alert('Incomplete', 'Please select all 4 images before proceeding.');
-      return;
-    }
-    navigation.navigate('SummaryScreen'); 
-  };
+  if (images.includes(null)) {
+    Alert.alert('Incomplete', 'Please select all 4 images before proceeding.');
+    return;
+  }
+
+  // Replace these with actual values or inputs if you have them
+  const location = 'Some Location';   // or get from user input/state
+  const totalTrees = 50;               // or get from user input/state
+
+  navigation.navigate('SummaryScreen', {
+    images: images,
+    location: location,
+    totalTrees: totalTrees,
+  });
+};
+
 
   return (
     <View style={styles.container}>

@@ -1,22 +1,44 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, Alert, StyleSheet } from 'react-native';
 import { FontAwesome5, MaterialIcons, AntDesign } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const ProfileScreen = ({ route }) => {
+const ProfileScreen = () => {
   const navigation = useNavigation();
   const [phoneVisible, setPhoneVisible] = useState(false);
+  const [userData, setUserData] = useState({ name: 'User Name', phone: '03XXXXXXXXX' });
 
-  // User data from signup
-  const userData = route.params || { name: 'User Name', phone: '03XXXXXXXXX' };
+  useEffect(() => {
+  const fetchUserData = async () => {
+    try {
+      const storedData = await AsyncStorage.getItem('userData');
+      if (storedData) {
+        const parsedData = JSON.parse(storedData);
+        console.log('📦 Retrieved userData:', parsedData); // 👈 Add this line
+        setUserData(parsedData);
+      }
+    } catch (error) {
+      console.log('Failed to load user data:', error);
+    }
+  };
+  fetchUserData();
+}, []);
 
-  const handleLogout = () => {
+
+  const handleLogout = async () => {
     Alert.alert(
       'Logout',
       'Are you sure you want to log out?',
       [
         { text: 'Cancel', style: 'cancel' },
-        { text: 'Logout', onPress: () => navigation.replace('Login') }, // Redirect to Login
+        {
+          text: 'Logout',
+          onPress: async () => {
+            await AsyncStorage.removeItem('userData');
+            navigation.replace('Login');
+          },
+        },
       ],
       { cancelable: false }
     );
@@ -25,27 +47,23 @@ const ProfileScreen = ({ route }) => {
   return (
     <View style={styles.container}>
       <View style={styles.sidebar}>
-        {/* Top Section (Profile Info) */}
         <View>
           <FontAwesome5 name="user-circle" size={70} color="#2a7e19" style={styles.profileIcon} />
           <Text style={styles.profileTitle}>My Profile</Text>
           <Text style={styles.userName}>{userData.name}</Text>
 
-          {/* My Contact Info */}
           <TouchableOpacity style={styles.option} onPress={() => setPhoneVisible(!phoneVisible)}>
             <MaterialIcons name="phone" size={20} color="rgb(128, 128, 128)" />
             <Text style={styles.optionText}>My Contact Info</Text>
           </TouchableOpacity>
           {phoneVisible && <Text style={styles.phoneNumber}>{userData.phone}</Text>}
 
-          {/* Edit Profile */}
           <TouchableOpacity style={styles.option} onPress={() => navigation.navigate('EditProfileScreen')}>
             <AntDesign name="edit" size={20} color="rgb(128, 128, 128)" />
             <Text style={styles.optionText}>Edit Profile</Text>
           </TouchableOpacity>
         </View>
 
-        {/* Logout Button (Moved to Bottom) */}
         <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
           <FontAwesome5 name="power-off" size={18} color="white" />
           <Text style={styles.logoutText}>Log Out</Text>
@@ -58,7 +76,7 @@ const ProfileScreen = ({ route }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#E6FAF0', // Light green background
+    backgroundColor: '#E6FAF0',
     flexDirection: 'row',
   },
   sidebar: {
@@ -69,11 +87,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     borderTopRightRadius: 40,
     alignItems: 'flex-start',
-    justifyContent: 'space-between', // Keeps elements together but moves logout to the bottom
+    justifyContent: 'space-between',
   },
   profileIcon: {
     marginTop: 20,
-    marginBottom: 15, // Keeps spacing tight
+    marginBottom: 15,
   },
   profileTitle: {
     fontSize: 18,
@@ -95,7 +113,7 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   optionText: {
-    fontWeight:'bold',
+    fontWeight: 'bold',
     fontSize: 16,
     marginLeft: 10,
     color: '#333',
@@ -114,7 +132,7 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     paddingHorizontal: 20,
     borderRadius: 25,
-    marginBottom: 30, // Keeps it properly spaced from the bottom
+    marginBottom: 30,
   },
   logoutText: {
     fontSize: 16,

@@ -4,7 +4,7 @@ import { View, Text, Image, StyleSheet } from 'react-native';
 const SplashScreen = () => {
   return (
     <View style={styles.container}>
-      <Image source={require('../../assets/citrus_logo-removebg-preview.png')} style={styles.logo} />
+      <Image source={require('../../assets/splash_logo.png')} style={styles.logo} />
       <Text style={styles.title}>Citrus Counter</Text>
       <Text style={styles.subtitle}>Count and Track Citrus Easily</Text>
     </View>

@@ -58,7 +58,7 @@ const EditProfileScreen = () => {
     }
 
     try {
-      const response = await fetch("http://192.168.37.218:5000/auth/edit-profile", {
+      const response = await fetch("https://citruscounter-production.up.railway.app/auth/edit-profile", {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
