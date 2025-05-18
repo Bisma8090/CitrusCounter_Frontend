@@ -4,7 +4,7 @@
     "slug": "CitrusCounter",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/citrus_icon.png",
+    "icon": "./assets/appiconn.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "splash": {
@@ -21,7 +21,11 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.bismaa.CitrusCounter"
+      "package": "com.bismaa.CitrusCounter",
+      "permissions": [
+    "ACCESS_FINE_LOCATION",
+    "ACCESS_COARSE_LOCATION"
+  ]
     },
     "web": {
       "bundler": "metro",
@@ -33,7 +37,7 @@
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/splash-icon.png",
+          "image": "./assets/splash_logo.png",
           "imageWidth": 200,
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"

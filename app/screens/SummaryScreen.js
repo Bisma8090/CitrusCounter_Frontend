@@ -13,6 +13,7 @@ const SummaryScreen = () => {
   const [citrusCount, setCitrusCount] = useState(null);
   const [history, setHistory] = useState([]);
   const [treesPerAcre, setTreesPerAcre] = useState(route.params?.totalTrees || null);
+  const [historyLoading, setHistoryLoading] = useState(true); // NEW STATE
 
   // Load user data from AsyncStorage
   const fetchUserData = async () => {
@@ -29,18 +30,18 @@ const SummaryScreen = () => {
     }
   };
 
-  // Call fetchUserData once when component mounts
   useEffect(() => {
     fetchUserData();
   }, []);
 
-  // Fetch summary data from API
   const fetchSummaryData = async () => {
     try {
       if (images.length !== 4) {
         Alert.alert('Error', 'Four images are required to fetch summary.');
         return;
       }
+
+      setHistoryLoading(true); // Start loading
 
       const formData = new FormData();
       images.forEach((uri, index) => {
@@ -50,9 +51,10 @@ const SummaryScreen = () => {
           name: `image${index + 1}.jpg`,
         });
       });
-if (userPhone) {
-  formData.append('phone', userPhone);
-}
+
+      if (userPhone) {
+        formData.append('phone', userPhone);
+      }
 
       const response = await fetch('https://citruscounter-production.up.railway.app/summary', {
         method: 'POST',
@@ -72,11 +74,7 @@ if (userPhone) {
       const data = JSON.parse(text);
       if (data) {
         setCitrusCount(data.latest_count);
-
-        // Filter history only for current user by matching phone number
-        const userHistory = data.previous_history.filter(
-          item => item.phone === userPhone
-        );
+        const userHistory = data.previous_history.filter(item => item.phone === userPhone);
         setHistory(userHistory);
       } else {
         throw new Error('Invalid response structure');
@@ -84,17 +82,17 @@ if (userPhone) {
     } catch (error) {
       Alert.alert('Error', 'Failed to fetch summary data');
       console.error('Error fetching summary:', error);
+    } finally {
+      setHistoryLoading(false); // End loading
     }
   };
 
-  // Whenever userPhone or images change, refetch summary data
   useEffect(() => {
     if (userPhone && images.length === 4) {
       fetchSummaryData();
     }
   }, [userPhone, images]);
 
-  // Generate report and navigate to ReportScreen
   const handleGenerateReport = async () => {
     const reportData = {
       date: new Date().toLocaleDateString(),
@@ -138,22 +136,25 @@ if (userPhone) {
       </Text>
 
       <Text style={styles.historyHeading}>Previous History</Text>
-{history.length === 0 ? (
-  <Text style={{ fontSize: 16, marginVertical: 10,marginBottom:222 }}>
-    No previous history found
-  </Text>
-) : (
-  <FlatList
-    data={history}
-    keyExtractor={(item, index) => index.toString()}
-    renderItem={({ item }) => (
-      <Text style={styles.historyItem}>
-        {item.date} | {item.citrusCount}
-      </Text>
-    )}
-  />
-)}
-
+      {historyLoading ? (
+        <Text style={{ fontSize: 16, marginVertical: 10, marginBottom: 222 }}>
+          Loading previous history...
+        </Text>
+      ) : history.length === 0 ? (
+        <Text style={{ fontSize: 16, marginVertical: 10, marginBottom: 222 }}>
+          No previous history found
+        </Text>
+      ) : (
+        <FlatList
+          data={history}
+          keyExtractor={(item, index) => index.toString()}
+          renderItem={({ item }) => (
+            <Text style={styles.historyItem}>
+              {item.date} | {item.citrusCount}
+            </Text>
+          )}
+        />
+      )}
 
       <View style={styles.buttonContainer}>
         <TouchableOpacity style={styles.button} onPress={handleGenerateReport}>

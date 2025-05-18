@@ -14,16 +14,33 @@ const HomeScreen = () => {
   const [coords, setCoords] = useState(null);
 
   useEffect(() => {
+  const timer = setTimeout(() => {
     getLocation();
-  }, []);
+  }, 500); // half second delay
 
-  const getLocation = async () => {
-    let { status } = await Location.requestForegroundPermissionsAsync();
-    if (status !== 'granted') {
-      Alert.alert('Permission Denied', 'Please allow location access in settings.');
+  return () => clearTimeout(timer);
+}, []);
+
+const getLocation = async () => {
+  try {
+    const locationServicesEnabled = await Location.hasServicesEnabledAsync();
+    if (!locationServicesEnabled) {
+      Alert.alert("Location Services Disabled", "Please enable location services on your device.");
       return;
     }
 
+    // Check permission status first
+    let { status } = await Location.getForegroundPermissionsAsync();
+    if (status !== 'granted') {
+      let permissionResponse = await Location.requestForegroundPermissionsAsync();
+      status = permissionResponse.status;
+      if (status !== 'granted') {
+        Alert.alert('Permission Denied', 'Please allow location access in settings.');
+        return;
+      }
+    }
+
+    // Now fetch location safely
     let loc = await Location.getCurrentPositionAsync({});
     setCoords({ latitude: loc.coords.latitude, longitude: loc.coords.longitude });
 
@@ -32,13 +49,20 @@ const HomeScreen = () => {
       longitude: loc.coords.longitude,
     });
 
-    if (reverseGeocode.length > 0) {
-      let address = `${reverseGeocode[0].name}, ${reverseGeocode[0].city}, ${reverseGeocode[0].region}`;
+    if (reverseGeocode.length > 0 && reverseGeocode[0]) {
+      let address = `${reverseGeocode[0].name ?? ''}, ${reverseGeocode[0].city ?? ''}, ${reverseGeocode[0].region ?? ''}`;
       setLocation(address);
     } else {
       setLocation("Location not found");
     }
-  };
+
+  } catch (error) {
+    console.log("Location error:", error);
+    Alert.alert("Error", "Failed to fetch location. Please make sure your GPS is turned on.");
+    setLocation("Location unavailable");
+  }
+};
+
 
   const generateReport = () => {
     console.log('HomeScreen generateReport called');
@@ -142,6 +166,8 @@ const HomeScreen = () => {
       <View style={styles.locationBox}>
         <Text style={styles.label1}>Your Farm Location</Text>
         <Text style={styles.locationText}>{location}</Text>
+     
+
         {coords && (
           <MapView
             style={styles.map}
