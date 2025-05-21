@@ -8,13 +8,16 @@
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "splash": {
-  "image": "./assets/splash_logo.png",
-  "resizeMode": "contain",
-  "backgroundColor": "#ffffff"
-},
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "runtimeVersion": {
+        "policy": "appVersion"
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -23,9 +26,12 @@
       },
       "package": "com.bismaa.CitrusCounter",
       "permissions": [
-    "ACCESS_FINE_LOCATION",
-    "ACCESS_COARSE_LOCATION"
-  ]
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION",
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION"
+      ],
+      "runtimeVersion": "1.0.0"
     },
     "web": {
       "bundler": "metro",
@@ -37,7 +43,7 @@
       [
         "expo-splash-screen",
         {
-          "image": "./assets/splash_logo.png",
+          "image": "./assets/splash-icon.png",
           "imageWidth": 200,
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"
@@ -52,6 +58,9 @@
       "eas": {
         "projectId": "abdb20ec-1ef3-48b5-8b4e-ac6b1b7d471e"
       }
+    },
+    "updates": {
+      "url": "https://u.expo.dev/abdb20ec-1ef3-48b5-8b4e-ac6b1b7d471e"
     }
   }
 }

@@ -10,58 +10,14 @@ const HomeScreen = () => {
   const navigation = useNavigation();
   const [landSize, setLandSize] = useState('');
   const [totalTrees, setTotalTrees] = useState('');
-  const [location, setLocation] = useState('Fetching location...');
-  const [coords, setCoords] = useState(null);
+
 
   useEffect(() => {
-  const timer = setTimeout(() => {
-    getLocation();
-  }, 500); // half second delay
-
-  return () => clearTimeout(timer);
+  
 }, []);
 
-const getLocation = async () => {
-  try {
-    const locationServicesEnabled = await Location.hasServicesEnabledAsync();
-    if (!locationServicesEnabled) {
-      Alert.alert("Location Services Disabled", "Please enable location services on your device.");
-      return;
-    }
 
-    // Check permission status first
-    let { status } = await Location.getForegroundPermissionsAsync();
-    if (status !== 'granted') {
-      let permissionResponse = await Location.requestForegroundPermissionsAsync();
-      status = permissionResponse.status;
-      if (status !== 'granted') {
-        Alert.alert('Permission Denied', 'Please allow location access in settings.');
-        return;
-      }
-    }
 
-    // Now fetch location safely
-    let loc = await Location.getCurrentPositionAsync({});
-    setCoords({ latitude: loc.coords.latitude, longitude: loc.coords.longitude });
-
-    let reverseGeocode = await Location.reverseGeocodeAsync({
-      latitude: loc.coords.latitude,
-      longitude: loc.coords.longitude,
-    });
-
-    if (reverseGeocode.length > 0 && reverseGeocode[0]) {
-      let address = `${reverseGeocode[0].name ?? ''}, ${reverseGeocode[0].city ?? ''}, ${reverseGeocode[0].region ?? ''}`;
-      setLocation(address);
-    } else {
-      setLocation("Location not found");
-    }
-
-  } catch (error) {
-    console.log("Location error:", error);
-    Alert.alert("Error", "Failed to fetch location. Please make sure your GPS is turned on.");
-    setLocation("Location unavailable");
-  }
-};
 
 
   const generateReport = () => {
@@ -69,10 +25,7 @@ const getLocation = async () => {
     console.log('Current totalTrees:', totalTrees, typeof totalTrees);
     console.log('Current landSize:', landSize);
 
-    if (location === 'Fetching location...') {
-      Alert.alert('Please wait', 'We are still fetching your location.');
-      return;
-    }
+    
 
     if (!landSize || !totalTrees) {
       Alert.alert('Missing Information', 'Please enter both land size and number of trees.');
@@ -82,7 +35,6 @@ const getLocation = async () => {
     navigation.navigate('ReportScreen', {
   landSize,
   totalTrees: parseInt(totalTrees), // ✅ this ensures numeric value is sent
-  location,
   date: new Date().toLocaleDateString(),
   farmerName: 'Sample Farmer',
   citrusCountPerTree: '10',
@@ -162,35 +114,19 @@ const getLocation = async () => {
         </View>
       </View>
 
-      {/* Location Box with Map */}
-      <View style={styles.locationBox}>
-        <Text style={styles.label1}>Your Farm Location</Text>
-        <Text style={styles.locationText}>{location}</Text>
      
-
-        {coords && (
-          <MapView
-            style={styles.map}
-            initialRegion={{
-              latitude: coords.latitude,
-              longitude: coords.longitude,
-              latitudeDelta: 0.01,
-              longitudeDelta: 0.01,
-            }}
-          >
-            <Marker coordinate={{ latitude: coords.latitude, longitude: coords.longitude }} />
-          </MapView>
-        )}
-      </View>
 
       {/* Add Images */}
       <TouchableOpacity
-        style={styles.imageUploadBox}
-        onPress={() => navigation.navigate('CitrusCounter')}
-      >
-        <Text style={styles.label}>Add images for count</Text>
-        <FontAwesome5 name="camera" size={40} color="#2a7e19" />
-      </TouchableOpacity>
+  style={styles.imageUploadBox}
+  onPress={() => navigation.navigate('CitrusCounter')}
+>
+  <View style={styles.imageUploadContent}>
+    <Text style={styles.label}>Add images for count</Text>
+    <FontAwesome5 name="camera" size={40} color="#2a7e19" />
+  </View>
+</TouchableOpacity>
+
 
       
 
@@ -224,6 +160,12 @@ const styles = StyleSheet.create({
     textShadowOffset: { width: 1, height: 2 },
     textShadowRadius: 5,
   },
+  imageUploadContent: {
+  justifyContent: 'center',
+  alignItems: 'center',
+  flexDirection: 'column', // default but for clarity
+},
+
   subtitle: {
     fontWeight: 'bold',
     fontSize: 16,
@@ -245,31 +187,17 @@ const styles = StyleSheet.create({
   input: { fontSize: 16, marginTop: 5, borderRadius: 9, borderColor: 'grey', borderWidth: 0.3 },
   placeholder: { fontSize: 12, color: '#999', marginLeft: 6 },
 
-  locationBox: {
-    borderWidth: 0.7,
-    borderColor: '#2a7e19',
-    borderRadius: 10,
-    padding: 10,
-    marginVertical: 10,
-    position: 'relative',
-    backgroundColor: '#f9f9f9',
-  },
-  label1: { fontSize: 16, fontWeight: 'bold', color: '#333', marginBottom: 5 },
-  locationText: { fontSize: 14, color: '#666', marginBottom: 5 },
-  map: {
-    width: '100%',
-    height: 120,
-    borderRadius: 10,
-  },
-
   imageUploadBox: {
-    borderWidth: 1,
-    borderColor: '#2a7e19',
-    borderRadius: 10,
-    padding: 20,
-    alignItems: 'center',
-    marginTop: 20,
-  },
+  borderWidth: 1,
+  borderColor: '#2a7e19',
+  borderRadius: 10,
+  padding: 20,
+  alignItems: 'center',   // already present for horizontal centering
+  justifyContent: 'center', // add this for vertical centering
+  marginTop: 25,
+  minHeight: 230,
+},
+
 saveButton: {
   marginTop: 8,
   backgroundColor: '#2a7e19',
