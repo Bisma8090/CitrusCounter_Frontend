@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
-import * as Location from 'expo-location';
-import MapView, { Marker } from 'react-native-maps';
-import { useNavigation } from '@react-navigation/native';
 import { FontAwesome5 } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const HomeScreen = () => {
@@ -11,48 +9,31 @@ const HomeScreen = () => {
   const [landSize, setLandSize] = useState('');
   const [totalTrees, setTotalTrees] = useState('');
 
-
-  useEffect(() => {
-  
-}, []);
-
-
-
-
+  useEffect(() => {}, []);
 
   const generateReport = () => {
-    console.log('HomeScreen generateReport called');
-    console.log('Current totalTrees:', totalTrees, typeof totalTrees);
-    console.log('Current landSize:', landSize);
-
-    
-
     if (!landSize || !totalTrees) {
       Alert.alert('Missing Information', 'Please enter both land size and number of trees.');
       return;
     }
 
     navigation.navigate('ReportScreen', {
-  landSize,
-  totalTrees: parseInt(totalTrees), // ✅ this ensures numeric value is sent
-  date: new Date().toLocaleDateString(),
-  farmerName: 'Sample Farmer',
-  citrusCountPerTree: '10',
-});
-
+      landSize,
+      totalTrees: parseInt(totalTrees),
+      date: new Date().toLocaleDateString(),
+      farmerName: 'Sample Farmer',
+      citrusCountPerTree: '10',
+    });
   };
 
   return (
     <View style={styles.container}>
-      {/* Top Design Elements */}
       <View style={styles.topDesign} />
       <View style={[styles.topDesign, styles.orangeCircle]} />
 
-      {/* Heading */}
       <Text style={styles.title}>CitrusCounter</Text>
       <Text style={styles.subtitle}>Make citrus farming easier with quick and accurate counts</Text>
 
-      {/* Inputs */}
       <View style={styles.row}>
         <View style={styles.inputBox}>
           <Text style={styles.label}>Land Size (acres)</Text>
@@ -63,23 +44,23 @@ const HomeScreen = () => {
             value={landSize}
             onChangeText={(text) => setLandSize(text.replace(/[^0-9]/g, ''))}
           />
-<TouchableOpacity
-  style={styles.saveButton}
-  onPress={async () => {
-    if (!landSize) {
-      Alert.alert('Missing Input', 'Please enter number of acres before saving.');
-      return;
-    }
-    try {
-      await AsyncStorage.setItem('savedlandsize', landSize);
-      Alert.alert('Success', 'Number of acres saved successfully.');
-    } catch (e) {
-      Alert.alert('Error', 'Failed to save the number of acres.');
-    }
-  }}
->
-  <Text style={styles.saveButtonText}>Enter</Text>
-</TouchableOpacity>
+          <TouchableOpacity
+            style={styles.saveButton}
+            onPress={async () => {
+              if (!landSize) {
+                Alert.alert('Missing Input', 'Please enter number of acres before saving.');
+                return;
+              }
+              try {
+                await AsyncStorage.setItem('savedlandsize', landSize);
+                Alert.alert('Success', 'Number of acres saved successfully.');
+              } catch (e) {
+                Alert.alert('Error', 'Failed to save the number of acres.');
+              }
+            }}
+          >
+            <Text style={styles.saveButtonText}>Enter</Text>
+          </TouchableOpacity>
         </View>
 
         <View style={styles.inputBox}>
@@ -90,47 +71,38 @@ const HomeScreen = () => {
             keyboardType="numeric"
             value={totalTrees}
             onChangeText={(text) => {
-              console.log('User input totalTrees:', text);
               setTotalTrees(text.replace(/[^0-9]/g, ''));
             }}
           />
-<TouchableOpacity
-  style={styles.saveButton}
-  onPress={async () => {
-    if (!totalTrees) {
-      Alert.alert('Missing Input', 'Please enter number of trees before saving.');
-      return;
-    }
-    try {
-      await AsyncStorage.setItem('savedTotalTrees', totalTrees);
-      Alert.alert('Success', 'Number of trees saved successfully.');
-    } catch (e) {
-      Alert.alert('Error', 'Failed to save the number of trees.');
-    }
-  }}
->
-  <Text style={styles.saveButtonText}>Enter</Text>
-</TouchableOpacity>
+          <TouchableOpacity
+            style={styles.saveButton}
+            onPress={async () => {
+              if (!totalTrees) {
+                Alert.alert('Missing Input', 'Please enter number of trees before saving.');
+                return;
+              }
+              try {
+                await AsyncStorage.setItem('savedTotalTrees', totalTrees);
+                Alert.alert('Success', 'Number of trees saved successfully.');
+              } catch (e) {
+                Alert.alert('Error', 'Failed to save the number of trees.');
+              }
+            }}
+          >
+            <Text style={styles.saveButtonText}>Enter</Text>
+          </TouchableOpacity>
         </View>
       </View>
 
-     
-
-      {/* Add Images */}
+      {/* Centered Image Upload Box */}
       <TouchableOpacity
-  style={styles.imageUploadBox}
-  onPress={() => navigation.navigate('CitrusCounter')}
->
-  <View style={styles.imageUploadContent}>
-    <Text style={styles.label}>Add images for count</Text>
-    <FontAwesome5 name="camera" size={40} color="#2a7e19" />
-  </View>
-</TouchableOpacity>
+        style={styles.imageUploadBox}
+        onPress={() => navigation.navigate('CitrusCounter')}
+      >
+        <Text style={styles.imageUploadText}>Add images for count</Text>
+        <FontAwesome5 name="camera" size={40} color="#2a7e19" />
+      </TouchableOpacity>
 
-
-      
-
-      {/* Bottom Navigation */}
       <View style={styles.bottomNav}>
         <TouchableOpacity style={styles.navButton}>
           <FontAwesome5 name="home" size={24} color="#2a7e19" />
@@ -160,12 +132,6 @@ const styles = StyleSheet.create({
     textShadowOffset: { width: 1, height: 2 },
     textShadowRadius: 5,
   },
-  imageUploadContent: {
-  justifyContent: 'center',
-  alignItems: 'center',
-  flexDirection: 'column', // default but for clarity
-},
-
   subtitle: {
     fontWeight: 'bold',
     fontSize: 16,
@@ -185,32 +151,31 @@ const styles = StyleSheet.create({
   },
   label: { fontSize: 16, fontWeight: 'bold', color: '#333' },
   input: { fontSize: 16, marginTop: 5, borderRadius: 9, borderColor: 'grey', borderWidth: 0.3 },
-  placeholder: { fontSize: 12, color: '#999', marginLeft: 6 },
-
+  saveButton: {
+    marginTop: 8,
+    backgroundColor: '#2a7e19',
+    paddingVertical: 6,
+    borderRadius: 6,
+    alignItems: 'center',
+  },
+  saveButtonText: { color: '#fff', fontSize: 14, fontWeight: 'bold' },
   imageUploadBox: {
-  borderWidth: 1,
-  borderColor: '#2a7e19',
-  borderRadius: 10,
-  padding: 20,
-  alignItems: 'center',   // already present for horizontal centering
-  justifyContent: 'center', // add this for vertical centering
-  marginTop: 25,
-  minHeight: 230,
-},
-
-saveButton: {
-  marginTop: 8,
-  backgroundColor: '#2a7e19',
-  paddingVertical: 6,
-  borderRadius: 6,
-  alignItems: 'center',
-},
-saveButtonText: {
-  color: '#fff',
-  fontSize: 14,
-  fontWeight: 'bold',
-},
-
+    borderWidth: 1,
+    borderColor: '#2a7e19',
+    borderRadius: 10,
+    padding: 20,
+    alignItems: 'center',
+    justifyContent: 'center', // Centering horizontally and vertically
+    marginTop: 30,
+    minHeight: 250,
+    flexDirection: 'column', // Ensures text and icon are stacked vertically
+  },
+  imageUploadText: {
+    fontSize: 18,
+    color: '#2a7e19',
+    fontWeight: 'bold',
+    marginBottom: 15, // Adds spacing between the text and the camera icon
+  },
   bottomNav: {
     flexDirection: 'row',
     justifyContent: 'space-around',
@@ -225,25 +190,6 @@ saveButtonText: {
   },
   navButton: { alignItems: 'center' },
   navText: { fontSize: 12, color: '#2a7e19', marginTop: 2 },
-
-  button: {
-    backgroundColor: '#2a7e19',
-    padding: 12,
-    borderRadius: 8,
-    alignItems: 'center',
-  },
-  buttonText: { color: '#fff', fontSize: 16, fontWeight: 'bold' },
-
-  topDesign: {
-    position: 'absolute',
-    width: 100,
-    height: 100,
-    backgroundColor: 'green',
-    borderRadius: 50,
-    top: -20,
-    left: -20,
-  },
-  orangeCircle: { backgroundColor: 'orange', right: -30, left: 'auto' },
 });
 
 export default HomeScreen;
