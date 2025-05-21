@@ -97,7 +97,7 @@ const ReportScreen = ({ route }) => {
       <Text style={styles.detail}>
         <Text style={styles.label}>Citrus Count Per Acre: </Text>{citrusCountPerAcre}
       </Text>
-
+      
       <TouchableOpacity style={styles.button} onPress={generatePDF}>
         <Text style={styles.buttonText}>Generate PDF</Text>
       </TouchableOpacity>
@@ -128,6 +128,7 @@ const styles = StyleSheet.create({
   label: {
     fontWeight: 'bold',
   },
+
   button: {
     backgroundColor: '#2a7e19',
     padding: 12,
