@@ -174,7 +174,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: '#2a7e19',
     fontWeight: 'bold',
-    marginBottom: 15, // Adds spacing between the text and the camera icon
+    marginBottom: 15,
   },
   bottomNav: {
     flexDirection: 'row',
