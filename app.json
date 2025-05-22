@@ -15,9 +15,7 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "runtimeVersion": {
-        "policy": "appVersion"
-      }
+      "runtimeVersion": "1.0.0"  
     },
     "android": {
       "adaptiveIcon": {
@@ -28,7 +26,8 @@
       "permissions": [
         "ACCESS_FINE_LOCATION",
         "ACCESS_COARSE_LOCATION"
-      ]
+      ],
+      "runtimeVersion": "1.0.0"  
     },
     "web": {
       "bundler": "metro",

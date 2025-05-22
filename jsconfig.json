@@ -4,6 +4,6 @@
     "paths": {
       "@/*": ["./*"]
     },
-    "typeRoots": []   // 👈 Add this line
+    "typeRoots": []  
   }
 }
