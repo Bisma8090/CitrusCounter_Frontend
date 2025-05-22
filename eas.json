@@ -1,25 +1,29 @@
 {
   "cli": {
-    "version": ">= 16.5.0",
+    "version": ">= 3.0.0",
     "appVersionSource": "remote"
   },
   "build": {
     "development": {
       "developmentClient": true,
       "distribution": "internal",
-      "workflow": "generic"
+      "android": {
+        "workflow": "generic"
+      }
     },
     "preview": {
       "distribution": "internal",
-      "workflow": "generic"
+      "android": {
+        "workflow": "generic"
+      }
     },
     "production": {
       "android": {
+        "workflow": "generic",
         "buildType": "app-bundle"
       },
       "autoIncrement": true,
-      "distribution": "store",
-      "workflow": "generic"
+      "distribution": "store"
     }
   },
   "submit": {
